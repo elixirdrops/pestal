@@ -1,10 +1,10 @@
 # Pestal
 
-**TODO: Add description**
+Http library for elixir
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+If [available in Hex](https://hex.pm/packages/pestal), the package can be installed as:
 
   1. Add `pestal` to your list of dependencies in `mix.exs`:
 
