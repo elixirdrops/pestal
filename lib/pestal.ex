@@ -18,25 +18,30 @@ defmodule Pestal do
     Supervisor.start_link(children, opts)
   end
 
-  def version do
-    Mix.Project.config[:version]
+  def request(method, url, body, headers, opts) do
+    url = Pestal.Url.parse(url)
+    {:ok, socket} = :gen_tcp.connect('localhost', 2000, [:binary, active: false])
+    :ok = :gen_tcp.send(socket, headers())
+    handle_resp(socket)
   end
 
-  def send_req do
-    {:ok, socket} = :gen_tcp.connect('localhost', 80, [:binary, active: false])
-    :ok = :gen_tcp.send(socket, request())
+  def handle_resp(socket) do
     case :gen_tcp.recv(socket, 0) do
-      {:ok, resp} -> IO.inspect(resp)
-      {:error, err} -> IO.inspect(err)
+      {:ok, resp} -> resp
+      {:error, err} -> err
     end
   end
 
-  def request do
+  def headers do
     """
-    GET /my_coupon/ HTTP/1.1\r\n
+    GET / HTTP/1.1\r\n
     Content-Type: text/html\r\n
     Host: localhost\r\n
     \r\n
     """
+  end
+
+  def version do
+    Mix.Project.config[:version]
   end
 end
