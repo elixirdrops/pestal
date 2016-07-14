@@ -18,10 +18,10 @@ defmodule Pestal do
     Supervisor.start_link(children, opts)
   end
 
-  def request(method, url, body, headers, opts) do
-    url = Pestal.Url.parse(url)
-    {:ok, socket} = :gen_tcp.connect('localhost', 2000, [:binary, active: false])
-    :ok = :gen_tcp.send(socket, headers())
+  def request(method, url, body, headers, opts \\ []) do
+    url = URI.parse(url)
+    {:ok, socket} = :gen_tcp.connect(to_charlist(url.host), url.port, [:binary, active: false])
+    :ok = :gen_tcp.send(socket, headers(method, url))
     handle_resp(socket)
   end
 
@@ -32,11 +32,11 @@ defmodule Pestal do
     end
   end
 
-  def headers do
+  def headers(method, url) do
     """
-    GET / HTTP/1.1\r\n
+    #{method} / HTTP/1.1\r\n
     Content-Type: text/html\r\n
-    Host: localhost\r\n
+    Host: #{url.host}\r\n
     \r\n
     """
   end
