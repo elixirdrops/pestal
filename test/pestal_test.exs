@@ -3,7 +3,10 @@ defmodule PestalTest do
   doctest Pestal
 
   test "send request" do
-    resp = Pestal.request("GET", "http://localhost:2000/", nil, [])
-    assert resp =~ ~r/MyCoupon/
+    {:ok, client} = Pestal.start("http://localhost:2000", [])
+    resp = Pestal.request(client, "GET", "/", nil, [])
+    IO.inspect(resp)
+    # assert resp =~ ~r/MyCoupon/
+    # assert resp =~ ~r/Copyright/
   end
 end
